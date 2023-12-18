@@ -19,6 +19,21 @@ type ApkService struct {
 	env        lib.Env
 }
 
+func (a ApkService) SimilarDevelopApk(dto dto.FilterApkDto, page int, size int) ([]models.Apk, error) {
+	var ltApk []models.Apk
+	err := a.repository.Model(models.Apk{}).
+		Offset(page*size).
+		Limit(size).
+		Order("realInstalls desc ").
+		Find(&ltApk, "(developer = ? or developerId = ?) and appId <> ?", dto.Developer, dto.DeveloperId, dto.AppId).Error
+
+	if err != nil {
+		return make([]models.Apk, 0), err
+	}
+
+	return ltApk, nil
+}
+
 func (a ApkService) SimilarApk(dto dto.FilterApkDto, page int, size int) ([]models.Apk, error) {
 	var ltApk []models.Apk
 	err := a.repository.Model(models.Apk{}).

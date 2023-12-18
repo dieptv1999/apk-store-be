@@ -25,5 +25,5 @@ func NewPaginationMiddleware(handler lib.RequestHandler, logger lib.Logger, env 
 func (m PaginationMiddleware) Setup() {
 	m.logger.Info("Setting up cors middleware")
 
-	m.handler.Gin.Use(pagination.New("page", "size", "0", "10", 10, 1000))
+	m.handler.Gin.Use(pagination.New("page", "size", "0", "10", 5, 100))
 }
