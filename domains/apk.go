@@ -14,6 +14,8 @@ type ApkService interface {
 	FeaturedApk(dto dto.FilterApkDto, page int, size int) ([]models.Apk, error)
 	SimilarApk(dto dto.FilterApkDto, page int, size int) ([]models.Apk, error)
 	SimilarDevelopApk(dto dto.FilterApkDto, page int, size int) ([]models.Apk, error)
+	CreateApkVersion(dto []models.ApkVersion) error
+	GetApkVersion(appId string) ([]models.ApkVersion, error)
 
 	GetAds() ([]models.Ads, error)
 	ClickAds(id int64) error

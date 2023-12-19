@@ -24,6 +24,8 @@ func (s ApkRoutes) Setup() {
 		auth.GET("/featured", s.apkController.GetFeaturedApk)
 		auth.POST("/similar", s.apkController.GetSimilarApk)
 		auth.POST("/similar/develop", s.apkController.GetSimilarDevelopApk)
+		auth.POST("/version", s.apkController.CreateApkVersion)
+		auth.POST("/versions", s.apkController.GetApkVersion)
 
 		auth.GET("/ads", s.apkController.GetAds)
 		auth.GET("/click-ads", s.apkController.ClickAds)

@@ -19,6 +19,21 @@ type ApkService struct {
 	env        lib.Env
 }
 
+func (a ApkService) GetApkVersion(appId string) ([]models.ApkVersion, error) {
+	var versions []models.ApkVersion
+	err := a.repository.Find(&versions, "appId = ?", appId).Error
+	if err != nil {
+		return make([]models.ApkVersion, 0), nil
+	}
+
+	return versions, nil
+}
+
+func (a ApkService) CreateApkVersion(dto []models.ApkVersion) error {
+	a.repository.Exec("update package set is_crawl_version = 1 where package_id = ?", dto[0].AppID)
+	return a.repository.Save(&dto).Error
+}
+
 func (a ApkService) SimilarDevelopApk(dto dto.FilterApkDto, page int, size int) ([]models.Apk, error) {
 	var ltApk []models.Apk
 	err := a.repository.Model(models.Apk{}).

@@ -98,6 +98,38 @@ func (u ApkController) GetSimilarDevelopApk(c *gin.Context) {
 	c.JSON(200, apk)
 }
 
+func (u ApkController) CreateApkVersion(c *gin.Context) {
+
+	req := []models.ApkVersion{}
+	if err := c.BindJSON(&req); err != nil {
+		u.logger.Error("Tham số sai định dạng")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Tham số sai định dạng",
+		})
+		return
+	}
+
+	err := u.service.CreateApkVersion(req)
+	if err != nil {
+		u.logger.Error(err)
+		c.Error(err)
+		return
+	}
+	c.JSON(200, nil)
+}
+
+func (u ApkController) GetApkVersion(c *gin.Context) {
+	appId, _ := c.GetQuery("appId")
+
+	rlt, err := u.service.GetApkVersion(appId)
+	if err != nil {
+		u.logger.Error(err)
+		c.JSON(400, gin.H{})
+		return
+	}
+	c.JSON(200, rlt)
+}
+
 func (u ApkController) GetReviews(c *gin.Context) {
 	page := c.GetInt("page")
 	size := c.GetInt("size")
