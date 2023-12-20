@@ -15,22 +15,23 @@ type ApkRoutes struct {
 // Setup user routes
 func (s ApkRoutes) Setup() {
 	s.logger.Info("Setting up apk")
-	auth := s.handler.Gin.Group("/apk")
+	apkGroup := s.handler.Gin.Group("/apk")
 	{
-		auth.POST("/create", s.apkController.CreateApk)
-		auth.POST("/", s.apkController.GetApk)
-		auth.POST("/create/review", s.apkController.CreateReview)
-		auth.POST("/reviews", s.apkController.GetReviews)
-		auth.GET("/featured", s.apkController.GetFeaturedApk)
-		auth.POST("/similar", s.apkController.GetSimilarApk)
-		auth.POST("/similar/develop", s.apkController.GetSimilarDevelopApk)
-		auth.POST("/version", s.apkController.CreateApkVersion)
-		auth.POST("/versions", s.apkController.GetApkVersion)
+		apkGroup.POST("/create", s.apkController.CreateApk)
+		apkGroup.POST("/", s.apkController.GetApk)
+		apkGroup.POST("/create/review", s.apkController.CreateReview)
+		apkGroup.POST("/reviews", s.apkController.GetReviews)
+		apkGroup.GET("/featured", s.apkController.GetFeaturedApk)
+		apkGroup.POST("/similar", s.apkController.GetSimilarApk)
+		apkGroup.POST("/similar/develop", s.apkController.GetSimilarDevelopApk)
+		apkGroup.POST("/version", s.apkController.CreateApkVersion)
+		apkGroup.POST("/versions", s.apkController.GetApkVersion)
+		apkGroup.POST("/category", s.apkController.GetApkInCategory)
 
-		auth.GET("/ads", s.apkController.GetAds)
-		auth.GET("/click-ads", s.apkController.ClickAds)
-		auth.GET("/feed", s.apkController.GetFeed)
-		auth.GET("/click-feed", s.apkController.ClickFeed)
+		apkGroup.GET("/ads", s.apkController.GetAds)
+		apkGroup.GET("/click-ads", s.apkController.ClickAds)
+		apkGroup.GET("/feed", s.apkController.GetFeed)
+		apkGroup.GET("/click-feed", s.apkController.ClickFeed)
 	}
 }
 

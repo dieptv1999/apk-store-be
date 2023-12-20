@@ -19,6 +19,27 @@ type ApkService struct {
 	env        lib.Env
 }
 
+func (a ApkService) GetApkInCategory(categorySlug string, sortBy string, page int, size int) ([]models.Apk, error) {
+	var apks []models.Apk
+	orderBy := "realInstalls desc"
+	switch sortBy {
+	case "latest":
+		orderBy = "updated desc"
+	case "highestRated":
+		orderBy = "score desc"
+	}
+	err := a.repository.Model(&models.Apk{}).
+		Offset(page*size).
+		Limit(size).
+		Order(orderBy).
+		Find(&apks, "lower(categories) like ?", "%"+strings.ToLower(categorySlug)+"%").Error
+
+	if err != nil {
+		return make([]models.Apk, 0), nil
+	}
+	return apks, nil
+}
+
 func (a ApkService) GetApkVersion(appId string) ([]models.ApkVersion, error) {
 	var versions []models.ApkVersion
 	err := a.repository.Find(&versions, "appId = ?", appId).Error

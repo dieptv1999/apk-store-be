@@ -130,6 +130,22 @@ func (u ApkController) GetApkVersion(c *gin.Context) {
 	c.JSON(200, rlt)
 }
 
+func (u ApkController) GetApkInCategory(c *gin.Context) {
+	page := c.GetInt("page")
+	size := c.GetInt("size")
+	categorySlug, _ := c.GetQuery("slug")
+	sortBy, _ := c.GetQuery("sortBy")
+	println(sortBy)
+
+	rlt, err := u.service.GetApkInCategory(categorySlug, sortBy, page, size)
+	if err != nil {
+		u.logger.Error(err)
+		c.JSON(400, gin.H{})
+		return
+	}
+	c.JSON(200, rlt)
+}
+
 func (u ApkController) GetReviews(c *gin.Context) {
 	page := c.GetInt("page")
 	size := c.GetInt("size")
