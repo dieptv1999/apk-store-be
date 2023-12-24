@@ -96,8 +96,9 @@ func (u ApkController) SearchApk(c *gin.Context) {
 }
 
 func (u ApkController) ClickDownload(c *gin.Context) {
-	versionId := c.GetInt("versionId")
-	err := u.service.ClickDownload(int64(versionId))
+	versionIdStr, _ := c.GetQuery("versionId")
+	versionId, _ := strconv.ParseInt(versionIdStr, 10, 64)
+	err := u.service.ClickDownload(versionId)
 	if err != nil {
 		u.logger.Error(err)
 	}
