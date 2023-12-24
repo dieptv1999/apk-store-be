@@ -31,6 +31,7 @@ func (s ApkRoutes) Setup() {
 		apkGroup.POST("/category", s.apkController.GetApkInCategory)
 		apkGroup.GET("/category/list", s.apkController.GetAllCategory)
 		apkGroup.GET("/search", s.apkController.SearchApk)
+		apkGroup.GET("/click-download", s.apkController.ClickDownload)
 
 		apkGroup.GET("/ads", s.apkController.GetAds)
 		apkGroup.GET("/click-ads", s.apkController.ClickAds)

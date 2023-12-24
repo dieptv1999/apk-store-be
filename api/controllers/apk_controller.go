@@ -95,6 +95,15 @@ func (u ApkController) SearchApk(c *gin.Context) {
 	c.JSON(200, apk)
 }
 
+func (u ApkController) ClickDownload(c *gin.Context) {
+	versionId := c.GetInt("versionId")
+	err := u.service.ClickDownload(int64(versionId))
+	if err != nil {
+		u.logger.Error(err)
+	}
+	c.JSON(200, gin.H{})
+}
+
 func (u ApkController) GetSimilarApk(c *gin.Context) {
 	page := c.GetInt("page")
 	size := c.GetInt("size")

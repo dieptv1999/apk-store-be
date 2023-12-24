@@ -243,19 +243,19 @@ func (l GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (strin
 	elapsed := time.Since(begin)
 	if l.LogLevel >= gormlogger.Info {
 		sql, rows := fc()
-		l.Debug("[", elapsed.Milliseconds(), " ms, ", rows, " rows] ", "sql -> ", sql)
+		l.Debug("[", elapsed.Milliseconds(), " ms, ", rows, " rows] ", "sql_gen.sql -> ", sql)
 		return
 	}
 
 	if l.LogLevel >= gormlogger.Warn {
 		sql, rows := fc()
-		l.SugaredLogger.Warn("[", elapsed.Milliseconds(), " ms, ", rows, " rows] ", "sql -> ", sql)
+		l.SugaredLogger.Warn("[", elapsed.Milliseconds(), " ms, ", rows, " rows] ", "sql_gen.sql -> ", sql)
 		return
 	}
 
 	if l.LogLevel >= gormlogger.Error {
 		sql, rows := fc()
-		l.SugaredLogger.Error("[", elapsed.Milliseconds(), " ms, ", rows, " rows] ", "sql -> ", sql)
+		l.SugaredLogger.Error("[", elapsed.Milliseconds(), " ms, ", rows, " rows] ", "sql_gen.sql -> ", sql)
 		return
 	}
 }

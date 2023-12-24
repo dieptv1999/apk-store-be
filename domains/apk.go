@@ -21,6 +21,7 @@ type ApkService interface {
 	GetApkInCategory(categorySlug string, sortBy string, page int, size int) ([]models.Apk, error)
 	GetAllCategory(categorySlug string, sortBy string, page int, size int) ([]models.Category, error)
 	SearchApk(keyWord string, sortBy string, page int, size int) ([]models.Apk, error)
+	ClickDownload(apkVersionId int64) error
 
 	GetAds() ([]models.Ads, error)
 	ClickAds(id int64) error

@@ -19,6 +19,10 @@ type ApkService struct {
 	env        lib.Env
 }
 
+func (a ApkService) ClickDownload(apkVersionId int64) error {
+	return a.repository.Exec("update apk_version set self_click_download = self_click_download + 1 where versionId = ?", apkVersionId).Error
+}
+
 func (a ApkService) SearchApk(keyWord string, sortBy string, page int, size int) ([]models.Apk, error) {
 	orderBy := "realInstalls desc"
 	switch sortBy {
@@ -141,6 +145,9 @@ func (a ApkService) GetApkVersion(appId string) ([]models.ApkVersion, error) {
 
 func (a ApkService) CreateApkVersion(dto []models.ApkVersion) error {
 	a.repository.Exec("update package set is_crawl_version = 1 where package_id = ?", dto[0].AppID)
+	for _, v := range dto {
+		v.SelfClickDownload = 0
+	}
 	return a.repository.Save(&dto).Error
 }
 
