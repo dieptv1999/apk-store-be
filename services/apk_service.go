@@ -19,6 +19,95 @@ type ApkService struct {
 	env        lib.Env
 }
 
+func (a ApkService) SearchApk(keyWord string, sortBy string, page int, size int) ([]models.Apk, error) {
+	orderBy := "realInstalls desc"
+	switch sortBy {
+	case "latest":
+		orderBy = "updated desc"
+	case "highestRated":
+		orderBy = "score desc"
+	}
+	var apks []models.Apk
+
+	err := a.repository.
+		Model(&models.Apk{}).
+		Order(orderBy).
+		Offset(page*size).
+		Limit(size).
+		Find(&apks, "lower(title) like ?", "%"+strings.ToLower(keyWord)+"%").
+		Error
+	if err != nil {
+		return make([]models.Apk, 0), err
+	}
+
+	return apks, nil
+}
+
+func (a ApkService) FeaturedEducationApk(dto dto.FilterApkDto, page int, size int, categorySlug string) ([]models.Apk, error) {
+	var ltApk []models.Apk
+	var categories []models.Category
+	err := a.repository.Find(&categories, "is_game = 0").Error
+	if err != nil {
+		return make([]models.Apk, 0), err
+	}
+	cateFilterStr := ""
+	for i, c := range categories {
+		if i == 0 {
+			cateFilterStr = cateFilterStr + "categories like '%" + c.Name + "%' "
+		} else {
+			cateFilterStr = cateFilterStr + "or categories like '%" + c.Name + "%' "
+		}
+	}
+
+	a.logger.Info(cateFilterStr)
+
+	err = a.repository.Model(models.Apk{}).
+		Offset(page*size).
+		Limit(size).
+		Order("realInstalls desc ").
+		Find(&ltApk, "isHot = ? and ("+cateFilterStr+")", 1).Error
+
+	if err != nil {
+		return make([]models.Apk, 0), err
+	}
+
+	return ltApk, nil
+}
+
+func (a ApkService) GetAllCategory(categorySlug string, sortBy string, page int, size int) ([]models.Category, error) {
+	var categories []models.Category
+
+	err := a.repository.Find(&categories, "status = 1 and name like ?", "%"+categorySlug+"%").Error
+
+	if err != nil {
+		return make([]models.Category, 0), err
+	}
+
+	return categories, nil
+}
+
+func (a ApkService) UpdateCategoryApk(dto dto.ApkDto) {
+	categoriesStr := ""
+	if len(dto.Categories) > 0 {
+		for _, v := range dto.Categories {
+			categoriesStr = categoriesStr + "," + v.Name
+		}
+	}
+
+	a.repository.Model(&models.Apk{}).Where("appId = ?", dto.AppID).Update("categories", categoriesStr)
+
+	categories := make([]models.Category, 0)
+
+	for _, c := range dto.Categories {
+		categories = append(categories, models.Category{
+			StoreID: c.ID,
+			Name:    c.Name,
+		})
+	}
+
+	a.repository.Save(&categories)
+}
+
 func (a ApkService) GetApkInCategory(categorySlug string, sortBy string, page int, size int) ([]models.Apk, error) {
 	var apks []models.Apk
 	orderBy := "realInstalls desc"
@@ -76,7 +165,7 @@ func (a ApkService) SimilarApk(dto dto.FilterApkDto, page int, size int) ([]mode
 		Offset(page*size).
 		Limit(size).
 		Order("realInstalls desc ").
-		Find(&ltApk, "genreId = ? and appId <> ?", dto.GenreId, dto.AppId).Error
+		Find(&ltApk, "categories like ? and appId <> ?", "%"+dto.GenreId+"%", dto.AppId).Error
 
 	if err != nil {
 		return make([]models.Apk, 0), err
@@ -85,13 +174,13 @@ func (a ApkService) SimilarApk(dto dto.FilterApkDto, page int, size int) ([]mode
 	return ltApk, nil
 }
 
-func (a ApkService) FeaturedApk(dto dto.FilterApkDto, page int, size int) ([]models.Apk, error) {
+func (a ApkService) FeaturedApk(dto dto.FilterApkDto, page int, size int, categorySlug string) ([]models.Apk, error) {
 	var ltApk []models.Apk
 	err := a.repository.Model(models.Apk{}).
 		Offset(page*size).
 		Limit(size).
 		Order("realInstalls desc ").
-		Find(&ltApk, "isHot = ?", 1).Error
+		Find(&ltApk, "isHot = ? and categories like ?", 1, "%"+categorySlug+"%").Error
 
 	if err != nil {
 		return make([]models.Apk, 0), err

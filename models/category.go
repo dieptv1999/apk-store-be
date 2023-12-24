@@ -11,6 +11,8 @@ type Category struct {
 	ID      int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	StoreID string `gorm:"column:store_id" json:"store_id"`
 	Name    string `gorm:"column:name" json:"name"`
+	Status  int64  `gorm:"column:status" json:"status"`
+	Icon    int64  `gorm:"column:icon" json:"icon"`
 }
 
 // TableName Category's table name

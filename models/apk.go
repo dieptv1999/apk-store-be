@@ -54,7 +54,7 @@ type Apk struct {
 	AppID                    string    `gorm:"column:appId" json:"appId"`
 	URL                      string    `gorm:"column:url" json:"url"`
 	Categories               string    `gorm:"column:categories" json:"categories"`
-	IsHot               string    `gorm:"column:isHot" json:"isHot"`
+	IsHot                    int64     `gorm:"column:isHot" json:"isHot"`
 }
 
 // TableName Apk's table name

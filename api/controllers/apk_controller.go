@@ -39,6 +39,19 @@ func (u ApkController) CreateApk(c *gin.Context) {
 	c.JSON(200, apk)
 }
 
+func (u ApkController) UpdateCategoryApk(c *gin.Context) {
+	var req = dto.ApkDto{}
+	if err := c.BindJSON(&req); err != nil {
+		u.logger.Error("Tham số sai định dạng", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Tham số sai định dạng",
+		})
+		return
+	}
+	u.service.UpdateCategoryApk(req)
+	c.JSON(200, gin.H{})
+}
+
 func (u ApkController) GetApk(c *gin.Context) {
 	appId, _ := c.GetQuery("appId")
 	apk, err := u.service.GetApk(appId)
@@ -51,7 +64,31 @@ func (u ApkController) GetApk(c *gin.Context) {
 func (u ApkController) GetFeaturedApk(c *gin.Context) {
 	page := c.GetInt("page")
 	size := c.GetInt("size")
-	apk, err := u.service.FeaturedApk(dto.FilterApkDto{}, page, size)
+	categorySlug, _ := c.GetQuery("slug")
+	apk, err := u.service.FeaturedApk(dto.FilterApkDto{}, page, size, categorySlug)
+	if err != nil {
+		u.logger.Error(err)
+	}
+	c.JSON(200, apk)
+}
+
+func (u ApkController) GetFeaturedEducationApk(c *gin.Context) {
+	page := c.GetInt("page")
+	size := c.GetInt("size")
+	categorySlug, _ := c.GetQuery("slug")
+	apk, err := u.service.FeaturedEducationApk(dto.FilterApkDto{}, page, size, categorySlug)
+	if err != nil {
+		u.logger.Error(err)
+	}
+	c.JSON(200, apk)
+}
+
+func (u ApkController) SearchApk(c *gin.Context) {
+	page := c.GetInt("page")
+	size := c.GetInt("size")
+	keyWord, _ := c.GetQuery("u")
+	sortBy, _ := c.GetQuery("s")
+	apk, err := u.service.SearchApk(keyWord, sortBy, page, size)
 	if err != nil {
 		u.logger.Error(err)
 	}
@@ -138,6 +175,22 @@ func (u ApkController) GetApkInCategory(c *gin.Context) {
 	println(sortBy)
 
 	rlt, err := u.service.GetApkInCategory(categorySlug, sortBy, page, size)
+	if err != nil {
+		u.logger.Error(err)
+		c.JSON(400, gin.H{})
+		return
+	}
+	c.JSON(200, rlt)
+}
+
+func (u ApkController) GetAllCategory(c *gin.Context) {
+	page := c.GetInt("page")
+	size := c.GetInt("size")
+	categorySlug, _ := c.GetQuery("slug")
+	sortBy, _ := c.GetQuery("sortBy")
+	println(sortBy)
+
+	rlt, err := u.service.GetAllCategory(categorySlug, sortBy, page, size)
 	if err != nil {
 		u.logger.Error(err)
 		c.JSON(400, gin.H{})
