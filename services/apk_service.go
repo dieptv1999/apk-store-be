@@ -44,6 +44,10 @@ func (a ApkService) SearchApk(keyWord string, sortBy string, page int, size int)
 		return make([]models.Apk, 0), err
 	}
 
+	a.repository.Save(&models.SearchHistory{
+		SearchText: keyWord,
+		CreatedAt:  time.Time{},
+	})
 	return apks, nil
 }
 
